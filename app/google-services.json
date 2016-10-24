@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "201017383589",
+    "firebase_url": "https://full-day-2016.firebaseio.com",
+    "project_id": "full-day-2016",
+    "storage_bucket": "full-day-2016.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201017383589:android:a2e790d6cecb04ef",
+        "android_client_info": {
+          "package_name": "com.youtube.sorcjc.fullday2016"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "201017383589-mgepoqga82p7pa60idlmb3k75pt1l9d2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.youtube.sorcjc.fullday2016",
+            "certificate_hash": "D4452327E1D55ED1F5A9FBBF7755173062CCFA2E"
+          }
+        },
+        {
+          "client_id": "201017383589-mt9ucgvact4utftfbk0tbqgkk98kgadj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3gXvLK7uew0uFb9XqkgL8YHdjFmAMIAQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "201017383589-mt9ucgvact4utftfbk0tbqgkk98kgadj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,33 +3,36 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_info"
+            android:icon="@drawable/ic_info_outline_24dp"
+            android:title="Sobre el evento" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_polls"
+            android:icon="@drawable/ic_mode_edit_24dp"
+            android:title="Responder encuesta" />
     </group>
 
-    <item android:title="Communicate">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_camera"
+            android:icon="@drawable/ic_camera_alt_24dp"
+            android:title="Capturar foto" />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_insert_photo_24dp"
+            android:title="Ver galería" />
+    </group>
+
+    <item android:title="Más opciones">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_build_24dp"
+                android:title="@string/action_settings" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_insert_emoticon_24dp"
+                android:title="Acerca de" />
         </menu>
     </item>
 

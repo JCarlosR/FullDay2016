@@ -1,8 +1,11 @@
 package com.youtube.sorcjc.fullday2016;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -72,11 +75,28 @@ public class PanelActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            showLogoutDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showLogoutDialog() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle("Confirmar para salir");
+        adb.setMessage("¿Está seguro que desea cerrar sesión?");
+
+        adb.setPositiveButton("Cerrar sesión", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        adb.setNegativeButton("Cancelar", null);
+        adb.show();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -85,18 +105,24 @@ public class PanelActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        switch (id) {
+            case R.id.nav_info:
+                break;
 
-        } else if (id == R.id.nav_slideshow) {
+            case R.id.nav_polls:
+                break;
 
-        } else if (id == R.id.nav_manage) {
+            case R.id.nav_camera:
+                break;
 
-        } else if (id == R.id.nav_share) {
+            case R.id.nav_gallery:
+                break;
 
-        } else if (id == R.id.nav_send) {
+            case R.id.nav_settings:
+                break;
 
+            case R.id.nav_about:
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -35,10 +35,10 @@
         </service>
 
         <activity
-            android:name=".PanelActivity"
+            android:name=".ui.PanelActivity"
             android:label="@string/title_activity_panel"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".ui.LoginActivity"></activity>
     </application>
 
 </manifest>

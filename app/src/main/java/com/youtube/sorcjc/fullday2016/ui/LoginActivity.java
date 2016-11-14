@@ -1,10 +1,13 @@
-package com.youtube.sorcjc.fullday2016;
+package com.youtube.sorcjc.fullday2016.ui;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.youtube.sorcjc.fullday2016.R;
+import com.youtube.sorcjc.fullday2016.ui.PanelActivity;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 

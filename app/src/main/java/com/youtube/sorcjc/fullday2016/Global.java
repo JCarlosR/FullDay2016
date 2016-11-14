@@ -18,4 +18,8 @@ public class Global {
         return sharedPref.getString(key, "");
     }
 
+    public static String getFullPathImage(String imageFile) {
+        return "http://fulldayunt.com/assets/images/" + imageFile;
+    }
+
 }

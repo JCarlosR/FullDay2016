@@ -2,7 +2,9 @@ package com.youtube.sorcjc.fullday2016;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 
 public class Global {
 
@@ -20,6 +22,14 @@ public class Global {
 
     public static String getFullPathImage(String imageFile) {
         return "http://fulldayunt.com/assets/images/" + imageFile;
+    }
+
+    public static void showMessageDialog(Context context, String title, String message) {
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        adb.setTitle(title);
+        adb.setMessage(message);
+        adb.setPositiveButton("Ok", null);
+        adb.show();
     }
 
 }

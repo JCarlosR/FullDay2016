@@ -24,6 +24,7 @@ public class Speaker {
     private String email;
     private String image;
     private String description;
+    private Paper firstPaper;
 
     public int getId() {
         return id;
@@ -79,5 +80,13 @@ public class Speaker {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Paper getFirstPaper() {
+        return firstPaper;
+    }
+
+    public void setFirstPaper(Paper firstPaper) {
+        this.firstPaper = firstPaper;
     }
 }

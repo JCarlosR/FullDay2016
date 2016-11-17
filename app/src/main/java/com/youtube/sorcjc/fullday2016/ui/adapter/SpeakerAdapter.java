@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
+import com.youtube.sorcjc.fullday2016.model.Paper;
 import com.youtube.sorcjc.fullday2016.model.Speaker;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class SpeakerAdapter extends RecyclerView.Adapter<SpeakerAdapter.ViewHold
         Button btnMore, btnContact;
         // data
         String email, description;
+        Paper paper;
 
         ViewHolder(View v) {
             super(v);
@@ -58,10 +60,10 @@ public class SpeakerAdapter extends RecyclerView.Adapter<SpeakerAdapter.ViewHold
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.btnMore:
-                    Log.d("SpeakerAdapter", "Mostrar más datos");
+                    Global.showMessageDialog(context, "Ponencia", paper.getSubject());
                     break;
                 case R.id.btnContact:
-                    Log.d("SpeakerAdapter", "Mostrar dato de contacto");
+                    Global.showMessageDialog(context, "Contacto", email);
                     break;
             }
         }
@@ -106,6 +108,7 @@ public class SpeakerAdapter extends RecyclerView.Adapter<SpeakerAdapter.ViewHold
         // params needed to show the details
         holder.email = currentSpeaker.getEmail();
         holder.description = currentSpeaker.getDescription();
+        holder.paper = currentSpeaker.getFirstPaper();
     }
 
     @Override

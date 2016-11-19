@@ -1,5 +1,7 @@
 package com.youtube.sorcjc.fullday2016.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Speaker {
 /*
 {
@@ -24,6 +26,8 @@ public class Speaker {
     private String email;
     private String image;
     private String description;
+
+    @SerializedName("first_paper")
     private Paper firstPaper;
 
     public int getId() {

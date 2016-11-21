@@ -17,7 +17,7 @@ import com.youtube.sorcjc.fullday2016.R;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
-
+    private String title,text;
     /**
      * Called when message is received.
      *
@@ -39,10 +39,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            String cadena;
+            Integer pos;
+            cadena = remoteMessage.getData().toString().replace("}","");
+            pos = cadena.indexOf("text");
+            Log.d(TAG, "Message data payload: " + cadena.substring(8,pos-2));
+            Log.d(TAG, "Message data payload: " + cadena.substring(pos+6));
+            title = cadena.substring(8,pos-2);
+            text = cadena.substring(pos+6);
         }
 
         // Check if message contains a notification payload.
@@ -52,7 +58,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-        sendNotification("Notificación recibida !");
+        sendNotification(text);
     }
     // [END receive_message]
 
@@ -72,7 +78,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.logo_app) // http://stackoverflow.com/questions/16045722/notification-not-showing
-                .setContentTitle("FCM Message")
+                .setContentTitle(title)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

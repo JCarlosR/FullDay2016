@@ -17,7 +17,7 @@ public interface FullDayApiService {
     Call<ArrayList<Speaker>> getSpeakers();
 
     @GET("authentication")
-    Call<LoginResponse> getLogin(@Query("email") String email, @Query("password") String password);
+    Call<LoginResponse> getLogin(@Query("email") String email, @Query("password") String password,@Query("key") String key);
 
     /*@FormUrlEncoded
     @POST("registrar-foto.php")

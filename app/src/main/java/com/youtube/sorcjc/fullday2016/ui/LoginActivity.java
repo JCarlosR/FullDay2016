@@ -8,9 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
 import com.youtube.sorcjc.fullday2016.io.FullDayApiAdapter;
+import com.youtube.sorcjc.fullday2016.io.fcm.MyFirebaseInstanceIDService;
 import com.youtube.sorcjc.fullday2016.io.response.LoginResponse;
 import com.youtube.sorcjc.fullday2016.ui.PanelActivity;
 
@@ -40,8 +42,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btnLogin:
                 final String email = etEmail.getText().toString();
                 final String password = etPassword.getText().toString();
-
-                Call<LoginResponse> call = FullDayApiAdapter.getApiService().getLogin(email, password);
+                MyFirebaseInstanceIDService mfiids = new MyFirebaseInstanceIDService();
+                Call<LoginResponse> call = FullDayApiAdapter.getApiService().getLogin(email, password, FirebaseInstanceId.getInstance().getToken());
                 call.enqueue(this);
                 break;
         }

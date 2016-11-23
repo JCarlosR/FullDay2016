@@ -10,6 +10,12 @@ import android.view.inputmethod.InputMethodManager;
 
 public class Global {
 
+    public static void clearSharedPreferences(Activity activity) {
+        saveInSharedPreferences(activity, "token", "");
+        saveInSharedPreferences(activity, "user_id", 0);
+        saveInSharedPreferences(activity, "name", "");
+    }
+
     public static void saveInSharedPreferences(Activity activity, String key, String value) {
         SharedPreferences sharedPref = activity.getSharedPreferences("global_preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();

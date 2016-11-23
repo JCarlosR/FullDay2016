@@ -74,6 +74,10 @@ public class PanelActivity extends AppCompatActivity
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
                     if (loginResponse.isError()) {
+                        // Clear shared preferences
+                        Global.clearSharedPreferences(activity);
+                        Toast.makeText(PanelActivity.this, R.string.session_expired, Toast.LENGTH_SHORT).show();
+
                         // Close all activities and open the login activity
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -158,9 +162,7 @@ public class PanelActivity extends AppCompatActivity
         adb.setPositiveButton("Cerrar sesión", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Clear shared preferences
-                Global.saveInSharedPreferences(activity, "token", "");
-                Global.saveInSharedPreferences(activity, "user_id", 0);
-                Global.saveInSharedPreferences(activity, "name", "");
+                Global.clearSharedPreferences(activity);
 
                 // Close all activities and open the login activity
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);

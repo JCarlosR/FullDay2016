@@ -108,7 +108,7 @@ public class ChatActivity extends AppCompatActivity implements ValueEventListene
     }
 
     private void redirectToLogin() {
-        Toast.makeText(this, "Su sesión ha caducado", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.session_expired, Toast.LENGTH_SHORT).show();
 
         // Close all activities and open the login activity
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);

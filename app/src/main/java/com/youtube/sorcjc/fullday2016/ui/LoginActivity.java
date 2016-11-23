@@ -1,6 +1,7 @@
 package com.youtube.sorcjc.fullday2016.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -35,6 +36,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Button btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
 
+        Button btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnRegister.setOnClickListener(this);
+
         // There is an active session?
         final String token = Global.getFromSharedPreferences(this, "token");
         final int user_id = Global.getIntFromSharedPreferences(this, "user_id");
@@ -64,6 +68,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 );
                 call.enqueue(this);
 
+                break;
+
+            case R.id.btnRegister:
+                Uri uri = Uri.parse("http://fulldayunt.com/register"); // missing 'http://' will cause crashed
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
                 break;
         }
     }

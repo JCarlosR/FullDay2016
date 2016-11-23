@@ -1,5 +1,6 @@
 package com.youtube.sorcjc.fullday2016.ui;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,18 +19,79 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
+import com.youtube.sorcjc.fullday2016.io.FullDayApiAdapter;
+import com.youtube.sorcjc.fullday2016.io.response.LoginResponse;
 import com.youtube.sorcjc.fullday2016.ui.activity.ChatActivity;
 import com.youtube.sorcjc.fullday2016.ui.fragment.AboutFragment;
 import com.youtube.sorcjc.fullday2016.ui.fragment.EventFragment;
 import com.youtube.sorcjc.fullday2016.ui.fragment.PollsFragment;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class PanelActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private static final String TAG = "PanelActivity";
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        long currentTime = new Date().getTime();
+        // Last time saved in shared preference
+        final long lastTime = Global.getLongFromSharedPreferences(this, "lastTime");
+
+        if (lastTime == 0) {
+            // Save immediately if there is no a preference
+            Global.saveInSharedPreferences(this, "lastTime", currentTime);
+        } else {
+            // Difference in seconds
+            double diff = TimeUnit.MILLISECONDS.toSeconds(currentTime - lastTime);
+
+            if (diff >= 60*30) // 30 minutes
+                requestNewToken(currentTime);
+        }
+    }
+
+    private void requestNewToken(final long currentTime) {
+        final String currentToken = Global.getFromSharedPreferences(this, "token");
+        final Activity activity = this;
+
+        Call<LoginResponse> call = FullDayApiAdapter.getApiService().getNewToken(currentToken);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful()) {
+                    LoginResponse loginResponse = response.body();
+                    if (loginResponse.isError()) {
+                        // Close all activities and open the login activity
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    } else {
+                        final String newToken = loginResponse.getToken();
+                        Global.saveInSharedPreferences(activity, "token", newToken);
+                        Global.saveInSharedPreferences(activity, "lastTime", currentTime);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Toast.makeText(PanelActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +102,6 @@ public class PanelActivity extends AppCompatActivity
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
-
-        // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        // .setAction("Action", null).show();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

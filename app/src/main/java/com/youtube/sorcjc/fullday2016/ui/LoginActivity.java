@@ -58,6 +58,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, R.string.message_incorrect_credentials, Toast.LENGTH_SHORT).show();
             } else {
                 Global.saveInSharedPreferences(this, "token", loginResponse.getToken());
+                Global.saveInSharedPreferences(this, "name", loginResponse.getName());
+                Global.saveInSharedPreferences(this, "user_id", loginResponse.getUserId());
+
                 Intent intent = new Intent(this, PanelActivity.class);
                 startActivity(intent);
                 finish();

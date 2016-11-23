@@ -16,8 +16,11 @@ public interface FullDayApiService {
     @GET("information")
     Call<ArrayList<Speaker>> getSpeakers();
 
-    @GET("authentication")
-    Call<LoginResponse> getLogin(@Query("email") String email, @Query("password") String password,@Query("key") String key);
+    @GET("authentication") // the last param represents a FCM token
+    Call<LoginResponse> getLogin(@Query("email") String email, @Query("password") String password, @Query("key") String key);
+
+    @GET("refresh")
+    Call<LoginResponse> getNewToken(@Query("token") String oldToken);
 
     /*@FormUrlEncoded
     @POST("registrar-foto.php")

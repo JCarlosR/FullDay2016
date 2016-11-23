@@ -33,8 +33,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
     private static final String TAG = "QuestionAdapter";
 
     private ArrayList<Question> dataSet;
+
     private static FirebaseDatabase database;
     private static QuestionAdapter questionAdapter;
+    private static int user_id;
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // context
@@ -47,12 +49,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
         Button btnLike, btnDislike;
         // data
         String key;
-        int user_id;
 
         ViewHolder(View v) {
             super(v);
             context = v.getContext();
-            user_id = 1; // TODO: get from shared preference
 
             tvName = (TextView) v.findViewById(R.id.tvName);
             tvDescription = (TextView) v.findViewById(R.id.tvDescription);
@@ -166,8 +166,9 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
         }
     }
 
-    public QuestionAdapter() {
+    public QuestionAdapter(int userId) {
         questionAdapter = this;
+        user_id = userId;
 
         this.dataSet = new ArrayList<>();
 

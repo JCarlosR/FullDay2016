@@ -39,7 +39,8 @@
             android:label="@string/title_activity_panel"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.LoginActivity" />
-        <activity android:name=".ui.activity.ChatActivity"></activity>
+        <activity android:name=".ui.activity.ChatActivity"
+            android:parentActivityName="com.youtube.sorcjc.fullday2016.ui.PanelActivity"/>
     </application>
 
 </manifest>

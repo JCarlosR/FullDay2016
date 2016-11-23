@@ -16,10 +16,30 @@ public class Global {
         editor.putString(key, value);
         editor.apply();
     }
+    public static void saveInSharedPreferences(Activity activity, String key, long value) {
+        SharedPreferences sharedPref = activity.getSharedPreferences("global_preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putLong(key, value);
+        editor.apply();
+    }
+    public static void saveInSharedPreferences(Activity activity, String key, int value) {
+        SharedPreferences sharedPref = activity.getSharedPreferences("global_preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
 
     public static String getFromSharedPreferences(Activity activity, String key) {
         SharedPreferences sharedPref = activity.getSharedPreferences("global_preferences", Context.MODE_PRIVATE);
         return sharedPref.getString(key, "");
+    }
+    public static int getIntFromSharedPreferences(Activity activity, String key) {
+        SharedPreferences sharedPref = activity.getSharedPreferences("global_preferences", Context.MODE_PRIVATE);
+        return sharedPref.getInt(key, 0);
+    }
+    public static long getLongFromSharedPreferences(Activity activity, String key) {
+        SharedPreferences sharedPref = activity.getSharedPreferences("global_preferences", Context.MODE_PRIVATE);
+        return sharedPref.getLong(key, 0);
     }
 
     public static String getFullPathImage(String imageFile) {

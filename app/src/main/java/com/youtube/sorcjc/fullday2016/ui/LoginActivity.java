@@ -34,6 +34,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         Button btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
+
+        // There is an active session?
+        final String token = Global.getFromSharedPreferences(this, "token");
+        final int user_id = Global.getIntFromSharedPreferences(this, "user_id");
+        final String name = Global.getFromSharedPreferences(this, "name");
+        if (!token.isEmpty() && user_id!=0 && !name.isEmpty()) {
+            Intent intent = new Intent(this, PanelActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        // So sad... in that case just fill with the latest email input
+        etEmail.setText(Global.getFromSharedPreferences(this, "email"));
     }
 
     @Override
@@ -42,9 +55,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btnLogin:
                 final String email = etEmail.getText().toString();
                 final String password = etPassword.getText().toString();
-                MyFirebaseInstanceIDService mfiids = new MyFirebaseInstanceIDService();
-                Call<LoginResponse> call = FullDayApiAdapter.getApiService().getLogin(email, password, FirebaseInstanceId.getInstance().getToken());
+
+                // Store the latest email input
+                Global.saveInSharedPreferences(this, "email", email);
+
+                Call<LoginResponse> call = FullDayApiAdapter.getApiService().getLogin(
+                        email, password, FirebaseInstanceId.getInstance().getToken()
+                );
                 call.enqueue(this);
+
                 break;
         }
     }
@@ -58,8 +77,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, R.string.message_incorrect_credentials, Toast.LENGTH_SHORT).show();
             } else {
                 Global.saveInSharedPreferences(this, "token", loginResponse.getToken());
-                Global.saveInSharedPreferences(this, "name", loginResponse.getName());
                 Global.saveInSharedPreferences(this, "user_id", loginResponse.getUserId());
+                Global.saveInSharedPreferences(this, "name", loginResponse.getName());
 
                 Intent intent = new Intent(this, PanelActivity.class);
                 startActivity(intent);

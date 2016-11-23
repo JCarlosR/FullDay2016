@@ -149,15 +149,23 @@ public class PanelActivity extends AppCompatActivity
     }
 
     private void showLogoutDialog() {
+        final Activity activity = this;
+
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setTitle("Confirmar para salir");
         adb.setMessage("¿Está seguro que desea cerrar sesión?");
 
         adb.setPositiveButton("Cerrar sesión", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                // Clear shared preferences
+                Global.saveInSharedPreferences(activity, "token", "");
+                Global.saveInSharedPreferences(activity, "user_id", 0);
+                Global.saveInSharedPreferences(activity, "name", "");
+
+                // Close all activities and open the login activity
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                finish();
             }
         });
         adb.setNegativeButton("Cancelar", null);
@@ -191,12 +199,10 @@ public class PanelActivity extends AppCompatActivity
 
             case R.id.nav_about:
                 fragment = new AboutFragment();
-                // Toast.makeText(this, "Fragment instanciado", Toast.LENGTH_SHORT).show();
                 break;
         }
 
         if (fragment != null) {
-            // Toast.makeText(this, "Fragment será asignado", Toast.LENGTH_SHORT).show();
             fragmentManager.beginTransaction()
                     .replace(R.id.content_panel, fragment)
                     .commit();

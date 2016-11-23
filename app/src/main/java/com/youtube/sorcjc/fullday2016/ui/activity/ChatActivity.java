@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -81,7 +82,30 @@ public class ChatActivity extends AppCompatActivity implements ValueEventListene
     private void getInstantQuestions() {
         database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("questions");
-        myRef.orderByChild("likes").addValueEventListener(this);
+        // First reading
+        myRef.orderByChild("likes").addListenerForSingleValueEvent(this);
+        // Next readings
+        myRef.orderByChild("likes").addChildEventListener(new ChildEventListener() {
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousKey) {
+                Question newQuestionAdded = dataSnapshot.getValue(Question.class);
+                newQuestionAdded.setKey(dataSnapshot.getKey());
+                questionAdapter.addQuestion(newQuestionAdded);
+            }
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Question questionChanged = dataSnapshot.getValue(Question.class);
+                questionChanged.setKey(dataSnapshot.getKey());
+                questionAdapter.updateQuestion(questionChanged);
+            }
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                questionAdapter.deleteQuestion(dataSnapshot.getKey());
+            }
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                // WTF is supposed to do here
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     @Override

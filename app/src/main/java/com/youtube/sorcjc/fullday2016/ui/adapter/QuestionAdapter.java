@@ -49,6 +49,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
         Button btnLike, btnDislike;
         // data
         String key;
+        int position;
 
         ViewHolder(View v) {
             super(v);
@@ -82,7 +83,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
 
         private void toggleLike() {
             DatabaseReference myRef = database.getReference("likes/"+user_id+"/"+key);
-            myRef.addListenerForSingleValueEvent(new StatusLikeForSingleValue(user_id, key));
+            myRef.addListenerForSingleValueEvent(new StatusLikeForSingleValue(user_id, key, position));
         }
 
     }
@@ -91,17 +92,19 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
 
         private int user_id;
         private String key;
+        private int position;
 
-        StatusLikeForSingleValue(int user_id, String key) {
+        StatusLikeForSingleValue(int user_id, String key, int position) {
             this.user_id = user_id;
             this.key = key;
+            this.position = position;
         }
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             if (dataSnapshot.exists()) {
                 // Count -1
-                DatabaseReference questionLikeRef = database.getReference("questions/"+key+"/likes");
+                final DatabaseReference questionLikeRef = database.getReference("questions/"+key+"/likes");
                 questionLikeRef.runTransaction(new Transaction.Handler() {
                     @Override
                     public Transaction.Result doTransaction(MutableData mutableData) {
@@ -122,11 +125,12 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                     @Override
                     public void onComplete(DatabaseError databaseError, boolean b,
                                            DataSnapshot dataSnapshot) {
-                        questionAdapter.notifyDataSetChanged();
+                        questionAdapter.dataSet.get(position).setLiked(false);
+                        questionAdapter.notifyItemChanged(position);
                     }
                 });
+
                 // Remove like
-                Log.d(TAG, "key question => -1 " + key);
                 database.getReference("likes/"+user_id+"/"+key).removeValue();
             } else {
                 // Count +1
@@ -151,11 +155,12 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                     @Override
                     public void onComplete(DatabaseError databaseError, boolean b,
                                            DataSnapshot dataSnapshot) {
-                        questionAdapter.notifyDataSetChanged();
+                        questionAdapter.dataSet.get(position).setLiked(true);
+                        questionAdapter.notifyItemChanged(position);
                     }
                 });
+
                 // Save who
-                Log.d(TAG, "key question => +1 " + key);
                 database.getReference("likes/"+user_id+"/"+key).setValue(true);
             }
         }
@@ -176,10 +181,32 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
             database = FirebaseDatabase.getInstance();
     }
 
-    // TODO: Change event from on value to on child added
     public void setDataSet(ArrayList<Question> dataSet) {
         this.dataSet = dataSet;
         notifyDataSetChanged();
+    }
+    public void addQuestion(Question question) {
+        this.dataSet.add(question);
+        final int sizeDataSet = this.dataSet.size();
+        notifyItemInserted(sizeDataSet);
+    }
+    public void updateQuestion(Question question) {
+        for (int i=0; i<this.dataSet.size(); ++i) {
+            if (this.dataSet.get(i).getKey().equals(question.getKey())) {
+                this.dataSet.set(i, question);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+    public void deleteQuestion(String key) {
+        for (int i=0; i<this.dataSet.size(); ++i) {
+            if (this.dataSet.get(i).getKey().equals(key)) {
+                this.dataSet.remove(i);
+                notifyItemRemoved(i);
+                break;
+            }
+        }
     }
 
     @Override
@@ -213,6 +240,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
 
         // params needed to show the details
         holder.key = currentQuestion.getKey();
+        holder.position = position;
     }
 
     @Override

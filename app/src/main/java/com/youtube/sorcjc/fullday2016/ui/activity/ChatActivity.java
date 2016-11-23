@@ -1,31 +1,34 @@
 package com.youtube.sorcjc.fullday2016.ui.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
 import com.youtube.sorcjc.fullday2016.model.Question;
-import com.youtube.sorcjc.fullday2016.ui.PanelActivity;
 import com.youtube.sorcjc.fullday2016.ui.adapter.QuestionAdapter;
-import com.youtube.sorcjc.fullday2016.ui.adapter.SpeakerAdapter;
 
 import java.util.ArrayList;
 
-public class ChatActivity extends AppCompatActivity implements ValueEventListener {
+public class ChatActivity extends AppCompatActivity implements ValueEventListener, View.OnClickListener {
 
     private static final String TAG = "ChatActivity";
 
     private QuestionAdapter questionAdapter;
     private FirebaseDatabase database;
+
+    private EditText etDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,10 @@ public class ChatActivity extends AppCompatActivity implements ValueEventListene
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        etDescription = (EditText) findViewById(R.id.etDescription);
+        ImageButton btnSend = (ImageButton) findViewById(R.id.btnSend);
+        btnSend.setOnClickListener(this);
 
         questionAdapter = new QuestionAdapter();
         recyclerView.setAdapter(questionAdapter);
@@ -71,6 +78,27 @@ public class ChatActivity extends AppCompatActivity implements ValueEventListene
     @Override
     public void onCancelled(DatabaseError error) {
         Log.w(TAG, "Failed to read value.", error.toException());
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnSend:
+                final String description = etDescription.getText().toString().trim();
+                if (description.isEmpty())
+                    return;
+
+                // TODO: Show a dialog with a warning
+                final String questionKey = database.getReference("questions").push().getKey();
+                Question newQuestion = new Question();
+                newQuestion.setDescription(description);
+                newQuestion.setUser("Juan");
+                newQuestion.setLikes(0);
+                database.getReference("questions/"+questionKey).setValue(newQuestion);
+                etDescription.setText("");
+                Global.hideKeyBoard(this);
+                break;
+        }
     }
 
     class MyGivenLikes implements ValueEventListener {

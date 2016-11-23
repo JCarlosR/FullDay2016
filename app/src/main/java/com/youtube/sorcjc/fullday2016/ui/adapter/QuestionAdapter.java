@@ -36,7 +36,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
     private static FirebaseDatabase database;
     private static QuestionAdapter questionAdapter;
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, ValueEventListener {
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // context
         Context context;
         // text views
@@ -72,15 +72,29 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
             switch (view.getId()) {
                 case R.id.btnLike:
                     toggleLike();
+                    btnLike.setEnabled(false);
                     break;
                 case R.id.btnDislike:
                     toggleLike();
+                    btnDislike.setEnabled(false);
             }
         }
 
         private void toggleLike() {
             DatabaseReference myRef = database.getReference("likes/"+user_id+"/"+key);
-            myRef.addListenerForSingleValueEvent(this);
+            myRef.addListenerForSingleValueEvent(new StatusLikeForSingleValue(user_id, key));
+        }
+
+    }
+
+    private static class StatusLikeForSingleValue implements ValueEventListener {
+
+        private int user_id;
+        private String key;
+
+        StatusLikeForSingleValue(int user_id, String key) {
+            this.user_id = user_id;
+            this.key = key;
         }
 
         @Override
@@ -112,9 +126,9 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                     }
                 });
                 // Remove like
+                Log.d(TAG, "key question => -1 " + key);
                 database.getReference("likes/"+user_id+"/"+key).removeValue();
             } else {
-
                 // Count +1
                 DatabaseReference questionLikeRef = database.getReference("questions/"+key+"/likes");
                 questionLikeRef.runTransaction(new Transaction.Handler() {
@@ -141,6 +155,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                     }
                 });
                 // Save who
+                Log.d(TAG, "key question => +1 " + key);
                 database.getReference("likes/"+user_id+"/"+key).setValue(true);
             }
         }
@@ -149,7 +164,6 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
         public void onCancelled(DatabaseError databaseError) {
             Log.w(TAG, "Failed to read value.", databaseError.toException());
         }
-
     }
 
     public QuestionAdapter() {
@@ -190,6 +204,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
             holder.btnLike.setVisibility(View.VISIBLE);
             holder.btnDislike.setVisibility(View.GONE);
         }
+        holder.btnLike.setEnabled(true);
+        holder.btnDislike.setEnabled(true);
 
         // set events
         holder.setOnClickListeners();

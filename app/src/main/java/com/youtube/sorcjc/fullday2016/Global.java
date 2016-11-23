@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 public class Global {
 
@@ -30,6 +32,14 @@ public class Global {
         adb.setMessage(message);
         adb.setPositiveButton("Ok", null);
         adb.show();
+    }
+
+    public static void hideKeyBoard(Activity activity) {
+        View view = activity.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
 }

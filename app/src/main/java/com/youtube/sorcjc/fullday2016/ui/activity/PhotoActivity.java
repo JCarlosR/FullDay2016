@@ -31,7 +31,7 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
 
-        String imageBase64 = getIntent().getStringExtra("imageBase64");
+        String imageBase64 = Global.getFromSharedPreferences(this, "imageBase64");
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

@@ -285,9 +285,6 @@ public class PanelActivity extends AppCompatActivity
     public void postPicture(Bitmap bitmap) {
         String imageEncoded = Global.getBase64FromBitmap(bitmap);
 
-        // Create a photo object
-        Photo newPhoto = new Photo();
-        newPhoto.setImageBase64(imageEncoded);
         // Take the user data
         final int userId = Global.getIntFromSharedPreferences(this, "user_id");
         if (userId == 0) {
@@ -295,11 +292,16 @@ public class PanelActivity extends AppCompatActivity
             return;
         }
         final String name = Global.getFromSharedPreferences(this, "name");
+
+        // Create a photo object
+        Photo newPhoto = new Photo();
+        newPhoto.setImageBase64(imageEncoded);
         newPhoto.setName(name);
+        newPhoto.setUserId(userId);
 
         // And store the photo
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("photos/"+userId);
+        DatabaseReference ref = database.getReference("photos");
         final String newPhotoKey = ref.push().getKey();
         ref.child(newPhotoKey).setValue(newPhoto, new DatabaseReference.CompletionListener() {
             @Override

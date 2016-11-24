@@ -14,7 +14,7 @@
             android:id="@+id/ivPhoto"
             android:scaleType="center"
             android:layout_width="match_parent"
-            android:layout_height="400dp" />
+            android:layout_height="250dp" />
 
         <TextView
             android:gravity="center"

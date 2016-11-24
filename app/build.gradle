@@ -7,8 +7,8 @@ android {
         applicationId "com.youtube.sorcjc.fullday2016"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 4
-        versionName "1.2b"
+        versionCode 5
+        versionName "1.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

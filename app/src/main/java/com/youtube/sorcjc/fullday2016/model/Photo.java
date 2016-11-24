@@ -4,6 +4,7 @@ public class Photo {
 
     private String name;
     private String imageBase64;
+    private int userId;
 
     public String getName() {
         return name;
@@ -19,5 +20,13 @@ public class Photo {
 
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

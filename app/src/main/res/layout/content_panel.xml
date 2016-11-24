@@ -6,18 +6,20 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.youtube.sorcjc.fullday2016.ui.PanelActivity"
     tools:showIn="@layout/app_bar_panel">
 
     <ImageView
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
         android:id="@+id/ivLogo"
         android:src="@mipmap/ic_launcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <TextView
+        android:id="@+id/tvWelcome"
         android:layout_below="@+id/ivLogo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
@@ -26,4 +28,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:layout_below="@+id/tvWelcome"
+        android:layout_centerHorizontal="true"
+        android:text="Use el menú lateral para acceder a las distintas secciones."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

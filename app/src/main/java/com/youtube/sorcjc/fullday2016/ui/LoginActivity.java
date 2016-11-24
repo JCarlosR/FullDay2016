@@ -39,6 +39,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Button btnRegister = (Button) findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(this);
 
+        Button btnResetPassword = (Button) findViewById(R.id.btnResetPassword);
+        btnResetPassword.setOnClickListener(this);
+
         // There is an active session?
         final String token = Global.getFromSharedPreferences(this, "token");
         final int user_id = Global.getIntFromSharedPreferences(this, "user_id");
@@ -76,7 +79,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.btnRegister:
-                Uri uri = Uri.parse("http://fulldayunt.com/register"); // missing 'http://' will cause crashed
+                Uri uriRegister = Uri.parse("http://fulldayunt.com/register"); // missing 'http://' will cause crashed
+                Intent intentRegister = new Intent(Intent.ACTION_VIEW, uriRegister);
+                startActivity(intentRegister);
+                break;
+
+            case R.id.btnResetPassword:
+                Uri uri = Uri.parse("http://fulldayunt.com/password/reset");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 break;

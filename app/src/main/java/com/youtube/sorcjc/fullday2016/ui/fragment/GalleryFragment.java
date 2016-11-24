@@ -1,6 +1,7 @@
 package com.youtube.sorcjc.fullday2016.ui.fragment;
 
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -45,8 +46,30 @@ public class GalleryFragment extends Fragment implements ValueEventListener {
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
+        GridLayoutManager layoutManager;
+
+        int screenLayout = getResources().getConfiguration().screenLayout;
+        screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
+
+        switch (screenLayout) {
+            case Configuration.SCREENLAYOUT_SIZE_SMALL:
+                layoutManager = new GridLayoutManager(getContext(), 1);
+                break;
+            case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+                layoutManager = new GridLayoutManager(getContext(), 1);
+                break;
+            case Configuration.SCREENLAYOUT_SIZE_LARGE:
+                layoutManager = new GridLayoutManager(getContext(), 2);
+                break;
+            case 4: // Configuration.SCREENLAYOUT_SIZE_XLARGE is API >= 9
+                layoutManager = new GridLayoutManager(getContext(), 3);
+                break;
+            default:
+                layoutManager = new GridLayoutManager(getContext(), 2);
+                break;
+        }
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(layoutManager);
 
         photoAdapter = new PhotoAdapter();
@@ -63,14 +86,8 @@ public class GalleryFragment extends Fragment implements ValueEventListener {
     }
 
     private void loadLastPhotos() {
-        final int user_id = Global.getIntFromSharedPreferences(getActivity(), "user_id");
-        if (user_id == 0) {
-            Toast.makeText(getContext(), R.string.session_expired, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("photos/"+user_id).addListenerForSingleValueEvent(this);
+        database.getReference("photos").addListenerForSingleValueEvent(this);
     }
 
     @Override

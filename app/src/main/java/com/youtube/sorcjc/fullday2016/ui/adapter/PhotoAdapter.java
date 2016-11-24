@@ -1,5 +1,6 @@
 package com.youtube.sorcjc.fullday2016.ui.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -64,8 +65,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
         @Override
         public void onClick(View view) {
             if (view.getId() == R.id.btnLook) {
+                Global.saveInSharedPreferences((Activity) context, "imageBase64", imageBase64);
                 Intent intent = new Intent(context, PhotoActivity.class);
-                intent.putExtra("imageBase64", imageBase64);
                 context.startActivity(intent);
             }
         }

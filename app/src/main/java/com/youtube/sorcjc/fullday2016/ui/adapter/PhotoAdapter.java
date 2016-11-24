@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,12 +45,16 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
             btnLook = (ImageButton) v.findViewById(R.id.btnLook);
         }
 
-        void loadImage(String imageBase64) {
+        void loadImage(String imageBase64, String thumbnailBase64) {
             this.imageBase64 = imageBase64;
 
             try {
-                Bitmap imageBitmap = Global.decodeFromBase64(imageBase64);
-                ivPhoto.setImageBitmap(imageBitmap);
+                if (thumbnailBase64 == null || thumbnailBase64.isEmpty()) {
+                    ivPhoto.setImageResource(R.drawable.logo_app);
+                } else {
+                    Bitmap thumbnailBitmap = Global.decodeAndReduceFromBase64(thumbnailBase64);
+                    ivPhoto.setImageBitmap(thumbnailBitmap);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -95,7 +97,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         Photo currentPhoto = dataSet.get(position);
 
-        holder.loadImage(currentPhoto.getImageBase64());
+        holder.loadImage(currentPhoto.getImageBase64(), currentPhoto.getThumbnail());
         holder.tvName.setText(currentPhoto.getName());
         holder.loadEvents();
     }

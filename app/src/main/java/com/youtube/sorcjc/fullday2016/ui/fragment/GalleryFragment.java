@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +36,8 @@ import retrofit2.Call;
 public class GalleryFragment extends Fragment implements ValueEventListener {
 
     private PhotoAdapter photoAdapter;
+    private ProgressBar progressBar;
+    private RecyclerView recyclerView;
 
     public GalleryFragment() {
     }
@@ -69,11 +72,13 @@ public class GalleryFragment extends Fragment implements ValueEventListener {
                 break;
         }
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(layoutManager);
 
         photoAdapter = new PhotoAdapter();
         recyclerView.setAdapter(photoAdapter);
+
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
         return view;
     }
@@ -99,6 +104,8 @@ public class GalleryFragment extends Fragment implements ValueEventListener {
         }
 
         photoAdapter.setDataSet(photos);
+        progressBar.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override

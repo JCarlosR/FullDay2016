@@ -23,4 +23,14 @@
     <string name="success_photo_upload">La foto se ha publicado correctamente !</string>
     <string name="optional_photo_delete">Si desea luego puede eliminar la foto del celular</string>
     <string name="share_via">Compartir en</string>
+
+    <string name="instructions">
+        <![CDATA[
+        <p><b>Evento:</b> Información sobre los ponentes y sus ponencias.</p>
+        <p><b>Encuestas:</b> Esta opción se habilitará el día del evento.</p>
+        <p><b>Capturar foto:</b> Permite subir una foto y compartirla con los demás.</p>
+        <p><b>Ver galería:</b> Últimas fotos subidas por los participantes del evento.</p>
+        <p><b>Botón flotante:</b> Enviar preguntas para la ponencia actual.</p>
+        ]]>
+    </string>
 </resources>

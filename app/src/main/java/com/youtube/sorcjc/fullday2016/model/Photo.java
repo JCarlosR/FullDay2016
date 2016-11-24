@@ -4,6 +4,7 @@ public class Photo {
 
     private String name;
     private String imageBase64;
+    private String thumbnail;
     private int userId;
 
     public String getName() {
@@ -28,5 +29,13 @@ public class Photo {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }

@@ -20,9 +20,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseError;
@@ -128,7 +130,8 @@ public class PanelActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Log.d("MyFirebase", "Token => " + FirebaseInstanceId.getInstance().getToken());
+        TextView tvInstructions = (TextView) findViewById(R.id.tvInstructions);
+        tvInstructions.setText(Html.fromHtml(getString(R.string.instructions)));
     }
 
     @Override
@@ -273,8 +276,8 @@ public class PanelActivity extends AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
-            postPicture(bitmap);
+            Bitmap fullBitmap = BitmapFactory.decodeFile(currentPhotoPath); // full size image
+            postPicture(fullBitmap);
             boolean deleted = new File(currentPhotoPath).delete();
             if (! deleted) {
                 Toast.makeText(this, R.string.optional_photo_delete, Toast.LENGTH_SHORT).show();
@@ -284,6 +287,7 @@ public class PanelActivity extends AppCompatActivity
 
     public void postPicture(Bitmap bitmap) {
         String imageEncoded = Global.getBase64FromBitmap(bitmap);
+        String thumbnailEncoded = Global.getLowBase64FromBitmap(bitmap);
 
         // Take the user data
         final int userId = Global.getIntFromSharedPreferences(this, "user_id");
@@ -296,6 +300,7 @@ public class PanelActivity extends AppCompatActivity
         // Create a photo object
         Photo newPhoto = new Photo();
         newPhoto.setImageBase64(imageEncoded);
+        newPhoto.setThumbnail(thumbnailEncoded);
         newPhoto.setName(name);
         newPhoto.setUserId(userId);
 

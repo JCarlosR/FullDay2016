@@ -24,9 +24,27 @@ public class Global {
         return Base64.encodeToString(byteFormat, Base64.NO_WRAP);
     }
 
+    public static String getLowBase64FromBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, stream);
+        byte[] byteFormat = stream.toByteArray();
+        // Get the base 64 string
+        return Base64.encodeToString(byteFormat, Base64.NO_WRAP);
+    }
+
     public static Bitmap decodeFromBase64(String imageBase64) throws IOException {
         byte[] decodedByteArray = android.util.Base64.decode(imageBase64, Base64.NO_WRAP);
         return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
+    }
+
+    public static Bitmap decodeAndReduceFromBase64(String imageBase64) throws IOException {
+        byte[] decodedByteArray = android.util.Base64.decode(imageBase64, Base64.NO_WRAP);
+        Bitmap image = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
+
+        if(image.getHeight() <= 500 && image.getWidth() <= 500)
+            return image;
+
+        return Bitmap.createScaledBitmap(image, image.getHeight()/2, image.getHeight()/2, false);
     }
 
     public static void clearSharedPreferences(Activity activity) {

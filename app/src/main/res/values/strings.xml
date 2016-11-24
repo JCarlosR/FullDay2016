@@ -22,4 +22,5 @@
     <string name="error_photo_upload">Ha ocurrido un error al subir la foto</string>
     <string name="success_photo_upload">La foto se ha publicado correctamente !</string>
     <string name="optional_photo_delete">Si desea luego puede eliminar la foto del celular</string>
+    <string name="share_via">Compartir en</string>
 </resources>

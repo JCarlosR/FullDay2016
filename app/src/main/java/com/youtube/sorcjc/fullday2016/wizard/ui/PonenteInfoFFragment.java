@@ -72,9 +72,9 @@ public class PonenteInfoFFragment extends Fragment {
         titulo=mPage.getTitle();
         if(titulo=="PONENCIA 6"){
             mNameView = ((TextView) rootView.findViewById(R.id.your_name));
-            mNameView.setText("Tema Especial");
+            mNameView.setText("Cómo gestionar una empresa de base tecnológica");
             mEmailView = ((TextView) rootView.findViewById(R.id.your_email));
-            mEmailView.setText("SILVIA NANE");
+            mEmailView.setText("Maricarmen García de Ureña");
         }
         return rootView;
     }

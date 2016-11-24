@@ -10,6 +10,7 @@
 
     <string name="message_incorrect_format">Formato incorrecto</string>
     <string name="message_incorrect_credentials">Sus datos son incorrectos</string>
+
     <string name="title_activity_surveys">SurveysActivity</string>
 
     <string name="submit_confirm_message">¿Está seguro de enviar esta Encuesta?</string>
@@ -17,5 +18,19 @@
     <string name="next">SIGUIENTE</string>
     <string name="finish">Enviar Encuesta</string>
     <string name="review">Encuesta Resuelta:</string>
+
+
+    <string name="session_expired">Su sesión ha caducado</string>
+    <string name="password_min_length">Ingrese al menos 6 caracteres para la contraseña</string>
+
+    <string name="stop_clicking_1">Solo una acción por segundo</string>
+    <string name="stop_clicking_2">No insista, por favor !</string>
+    <string name="stop_clicking_3">Inhale y exhale</string>
+    <string name="stop_clicking_4">Controla tu dedo e.e</string>
+
+    <string name="error_photo_upload">Ha ocurrido un error al subir la foto</string>
+    <string name="success_photo_upload">La foto se ha publicado correctamente !</string>
+    <string name="optional_photo_delete">Si desea luego puede eliminar la foto del celular</string>
+    <string name="share_via">Compartir en</string>
 
 </resources>

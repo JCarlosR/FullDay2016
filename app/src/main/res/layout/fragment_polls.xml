@@ -2,12 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="com.youtube.sorcjc.fullday2016.ui.fragment.PollsFragment">
 
     <TextView
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Responde las siguientes preguntas y gana premios increíbles !" />
+        android:text="Esta opción se habilitará el día del evento ;)" />
 
 </LinearLayout>

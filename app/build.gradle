@@ -5,10 +5,10 @@ android {
     buildToolsVersion "24.0.0"
     defaultConfig {
         applicationId "com.youtube.sorcjc.fullday2016"
-        minSdkVersion 16
+        minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.2b"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

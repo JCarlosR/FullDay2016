@@ -1,6 +1,7 @@
 package com.youtube.sorcjc.fullday2016.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,9 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
 import com.youtube.sorcjc.fullday2016.io.FullDayApiAdapter;
+import com.youtube.sorcjc.fullday2016.io.fcm.MyFirebaseInstanceIDService;
 import com.youtube.sorcjc.fullday2016.io.response.LoginResponse;
 import com.youtube.sorcjc.fullday2016.ui.PanelActivity;
 
@@ -32,6 +35,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         Button btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
+
+        Button btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnRegister.setOnClickListener(this);
+
+        // There is an active session?
+        final String token = Global.getFromSharedPreferences(this, "token");
+        final int user_id = Global.getIntFromSharedPreferences(this, "user_id");
+        final String name = Global.getFromSharedPreferences(this, "name");
+        if (!token.isEmpty() && user_id!=0 && !name.isEmpty()) {
+            Intent intent = new Intent(this, PanelActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        // So sad... in that case just fill with the latest email input
+        etEmail.setText(Global.getFromSharedPreferences(this, "email"));
     }
 
     @Override
@@ -41,8 +60,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 final String email = etEmail.getText().toString();
                 final String password = etPassword.getText().toString();
 
-                Call<LoginResponse> call = FullDayApiAdapter.getApiService().getLogin(email, password);
+                // Store the latest email input
+                Global.saveInSharedPreferences(this, "email", email);
+
+                if (password.length() < 6) {
+                    Toast.makeText(this, R.string.password_min_length, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Call<LoginResponse> call = FullDayApiAdapter.getApiService().getLogin(
+                        email, password, FirebaseInstanceId.getInstance().getToken()
+                );
                 call.enqueue(this);
+
+                break;
+
+            case R.id.btnRegister:
+                Uri uri = Uri.parse("http://fulldayunt.com/register"); // missing 'http://' will cause crashed
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
                 break;
         }
     }
@@ -56,6 +92,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, R.string.message_incorrect_credentials, Toast.LENGTH_SHORT).show();
             } else {
                 Global.saveInSharedPreferences(this, "token", loginResponse.getToken());
+                Global.saveInSharedPreferences(this, "user_id", loginResponse.getUserId());
+                Global.saveInSharedPreferences(this, "name", loginResponse.getName());
+
                 Intent intent = new Intent(this, PanelActivity.class);
                 startActivity(intent);
                 finish();

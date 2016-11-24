@@ -3,6 +3,9 @@
     package="com.youtube.sorcjc.fullday2016">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -39,9 +42,14 @@
             android:label="@string/title_activity_panel"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.LoginActivity" />
-        <activity android:name=".ui.activity.ChatActivity" />
+
         <activity android:name=".SurveyActivity"
             android:parentActivityName=".ui.PanelActivity"></activity>
+        <activity
+            android:name=".ui.activity.ChatActivity"
+            android:parentActivityName=".ui.PanelActivity" />
+        <activity android:name=".ui.activity.PhotoActivity" />
+
     </application>
 
 </manifest>

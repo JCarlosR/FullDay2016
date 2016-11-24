@@ -1,8 +1,14 @@
 package com.youtube.sorcjc.fullday2016.ui;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,19 +24,29 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
 import com.youtube.sorcjc.fullday2016.SurveyActivity;
 import com.youtube.sorcjc.fullday2016.io.FullDayApiAdapter;
+import com.youtube.sorcjc.fullday2016.io.response.LoginResponse;
 import com.youtube.sorcjc.fullday2016.io.response.SurveyResponse;
+import com.youtube.sorcjc.fullday2016.model.Photo;
 import com.youtube.sorcjc.fullday2016.model.Survey;
 import com.youtube.sorcjc.fullday2016.ui.activity.ChatActivity;
 import com.youtube.sorcjc.fullday2016.ui.fragment.AboutFragment;
 import com.youtube.sorcjc.fullday2016.ui.fragment.EventFragment;
+import com.youtube.sorcjc.fullday2016.ui.fragment.GalleryFragment;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +58,60 @@ public class PanelActivity extends AppCompatActivity
     private static final String TAG = "PanelActivity";
     ArrayList<Survey> arrayList;
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        long currentTime = new Date().getTime();
+        // Last time saved in shared preference
+        final long lastTime = Global.getLongFromSharedPreferences(this, "lastTime");
+
+        if (lastTime == 0) {
+            // Save immediately if there is no a preference
+            Global.saveInSharedPreferences(this, "lastTime", currentTime);
+        } else {
+            // Difference in seconds
+            double diff = TimeUnit.MILLISECONDS.toSeconds(currentTime - lastTime);
+
+            if (diff >= 60*30) // 30 minutes
+                requestNewToken(currentTime);
+        }
+    }
+
+    private void requestNewToken(final long currentTime) {
+        final String currentToken = Global.getFromSharedPreferences(this, "token");
+        final Activity activity = this;
+
+        Call<LoginResponse> call = FullDayApiAdapter.getApiService().getNewToken(currentToken);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful()) {
+                    LoginResponse loginResponse = response.body();
+                    if (loginResponse.isError()) {
+                        // Clear shared preferences
+                        Global.clearSharedPreferences(activity);
+                        Toast.makeText(PanelActivity.this, R.string.session_expired, Toast.LENGTH_SHORT).show();
+
+                        // Close all activities and open the login activity
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    } else {
+                        final String newToken = loginResponse.getToken();
+                        Global.saveInSharedPreferences(activity, "token", newToken);
+                        Global.saveInSharedPreferences(activity, "lastTime", currentTime);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Toast.makeText(PanelActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_panel);
@@ -50,9 +120,6 @@ public class PanelActivity extends AppCompatActivity
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
-
-        // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        // .setAction("Action", null).show();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -63,7 +130,7 @@ public class PanelActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Log.d("MyFirebase", "Token => " + FirebaseInstanceId.getInstance().getToken());
+        // Log.d("MyFirebase", "Token => " + FirebaseInstanceId.getInstance().getToken());
     }
 
     @Override
@@ -78,19 +145,15 @@ public class PanelActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu
         getMenuInflater().inflate(R.menu.panel, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
             showLogoutDialog();
             return true;
@@ -100,15 +163,21 @@ public class PanelActivity extends AppCompatActivity
     }
 
     private void showLogoutDialog() {
+        final Activity activity = this;
+
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setTitle("Confirmar para salir");
         adb.setMessage("¿Está seguro que desea cerrar sesión?");
 
         adb.setPositiveButton("Cerrar sesión", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                // Clear shared preferences
+                Global.clearSharedPreferences(activity);
+
+                // Close all activities and open the login activity
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                finish();
             }
         });
         adb.setNegativeButton("Cancelar", null);
@@ -156,22 +225,19 @@ public class PanelActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_camera:
+                startCamera();
                 break;
 
             case R.id.nav_gallery:
-                break;
-
-            case R.id.nav_settings:
+                fragment = new GalleryFragment();
                 break;
 
             case R.id.nav_about:
                 fragment = new AboutFragment();
-                // Toast.makeText(this, "Fragment instanciado", Toast.LENGTH_SHORT).show();
                 break;
         }
 
         if (fragment != null) {
-            // Toast.makeText(this, "Fragment será asignado", Toast.LENGTH_SHORT).show();
             fragmentManager.beginTransaction()
                     .replace(R.id.content_panel, fragment)
                     .commit();
@@ -190,5 +256,86 @@ public class PanelActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
         }
+    }
+
+    private static final int REQUEST_IMAGE_CAPTURE = 100;
+    private final String DEFAULT_PHOTO_EXTENSION = "jpg";
+    private String currentPhotoPath; // location of the last photo taken
+
+    private void startCamera() {
+        // Create the File where the photo should go
+        File photoFile = null;
+        try {
+            photoFile = createDestinationFile();
+        } catch (IOException ex) {
+            return;
+        }
+
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private File createDestinationFile() throws IOException {
+        // Path for the temporary image and its name
+        final File storageDirectory = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        final String imageFileName = "" + System.currentTimeMillis();
+
+        File image = File.createTempFile(
+                imageFileName,          // prefix
+                "." + DEFAULT_PHOTO_EXTENSION, // suffix
+                storageDirectory              // directory
+        );
+
+        // Save a the file path
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+            postPicture(bitmap);
+            boolean deleted = new File(currentPhotoPath).delete();
+            if (! deleted) {
+                Toast.makeText(this, R.string.optional_photo_delete, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void postPicture(Bitmap bitmap) {
+        String imageEncoded = Global.getBase64FromBitmap(bitmap);
+
+        // Create a photo object
+        Photo newPhoto = new Photo();
+        newPhoto.setImageBase64(imageEncoded);
+        // Take the user data
+        final int userId = Global.getIntFromSharedPreferences(this, "user_id");
+        if (userId == 0) {
+            Toast.makeText(PanelActivity.this, R.string.session_expired, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final String name = Global.getFromSharedPreferences(this, "name");
+        newPhoto.setName(name);
+
+        // And store the photo
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("photos/"+userId);
+        final String newPhotoKey = ref.push().getKey();
+        ref.child(newPhotoKey).setValue(newPhoto, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference ref) {
+                if (databaseError != null) {
+                    Toast.makeText(PanelActivity.this, R.string.error_photo_upload, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PanelActivity.this, R.string.success_photo_upload, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

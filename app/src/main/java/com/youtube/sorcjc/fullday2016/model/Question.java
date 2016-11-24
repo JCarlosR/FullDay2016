@@ -1,11 +1,16 @@
 package com.youtube.sorcjc.fullday2016.model;
 
+import com.google.firebase.database.Exclude;
+
 public class Question {
 
-    private String key;
     private String description;
     private int likes;
     private String user;
+
+    @Exclude
+    private String key;
+    @Exclude
     private boolean liked;
 
     public Question() {

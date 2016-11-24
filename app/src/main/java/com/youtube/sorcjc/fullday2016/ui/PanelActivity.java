@@ -20,17 +20,27 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
+import com.youtube.sorcjc.fullday2016.SurveyActivity;
+import com.youtube.sorcjc.fullday2016.io.FullDayApiAdapter;
+import com.youtube.sorcjc.fullday2016.io.response.SurveyResponse;
+import com.youtube.sorcjc.fullday2016.model.Survey;
 import com.youtube.sorcjc.fullday2016.ui.activity.ChatActivity;
 import com.youtube.sorcjc.fullday2016.ui.fragment.AboutFragment;
 import com.youtube.sorcjc.fullday2016.ui.fragment.EventFragment;
-import com.youtube.sorcjc.fullday2016.ui.fragment.PollsFragment;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PanelActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, Callback<SurveyResponse> {
 
     private static final String TAG = "PanelActivity";
-
+    ArrayList<Survey> arrayList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,8 +114,30 @@ public class PanelActivity extends AppCompatActivity
         adb.setNegativeButton("Cancelar", null);
         adb.show();
     }
+    private  void  ObtenerQuestions(){
+        Call<SurveyResponse> call= FullDayApiAdapter.getApiService().getSurvey(Global.getFromSharedPreferences(this,"token"));
+        call.enqueue(this);
+    }
 
     @Override
+    public void onResponse(Call<SurveyResponse> call, Response<SurveyResponse> response) {
+        if (response.isSuccessful()) {
+            SurveyResponse surveyResponse = response.body();
+            arrayList = surveyResponse.getSurvey();
+            Intent intent = new Intent(this, SurveyActivity.class);
+
+            intent.putExtra("arrayList", arrayList);
+
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onFailure(Call<SurveyResponse> call, Throwable t) {
+        Log.e(TAG, t.getLocalizedMessage());
+    }
+
+        @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
@@ -118,7 +150,9 @@ public class PanelActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_polls:
-                fragment = new PollsFragment();
+            {//fragment = new PollsFragment();
+                ObtenerQuestions();
+                }
                 break;
 
             case R.id.nav_camera:

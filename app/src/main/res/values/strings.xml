@@ -10,4 +10,12 @@
 
     <string name="message_incorrect_format">Formato incorrecto</string>
     <string name="message_incorrect_credentials">Sus datos son incorrectos</string>
+    <string name="title_activity_surveys">SurveysActivity</string>
+
+    <string name="submit_confirm_message">¿Está seguro de enviar esta Encuesta?</string>
+    <string name="submit_confirm_button">Confirmar</string>
+    <string name="next">SIGUIENTE</string>
+    <string name="finish">Enviar Encuesta</string>
+    <string name="review">Encuesta Resuelta:</string>
+
 </resources>

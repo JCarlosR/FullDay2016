@@ -246,7 +246,7 @@ public class SurveyActivity extends AppCompatActivity implements PageFragmentCal
             ArrayList<String> Enviar=new ArrayList<String>();
             Calendar calendario = Calendar.getInstance();
             int hora =calendario.get(Calendar.HOUR_OF_DAY);
-            if (hora<13){
+            if (hora<14){
                 Enviar.add(mWizardModel.findByKey("1. El contenido de la ponencia ¿Se han alineado con el tema principal del evento, “GESTIÓN DE TI”?").getData().getString(Page.SIMPLE_DATA_KEY));
                 Enviar.add(mWizardModel.findByKey("2. ¿El ponente ha sabido mantener el interés y fomentar la participación durante su ponencia?").getData().getString(Page.SIMPLE_DATA_KEY));
                 Enviar.add(mWizardModel.findByKey("3. ¿El ponente presentó casos de éxito sobre el tema tratado y su participación fue práctica y entendible?").getData().getString(Page.SIMPLE_DATA_KEY));

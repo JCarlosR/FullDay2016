@@ -63,6 +63,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // Store the latest email input
                 Global.saveInSharedPreferences(this, "email", email);
 
+                if (password.length() < 6) {
+                    Toast.makeText(this, R.string.password_min_length, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Call<LoginResponse> call = FullDayApiAdapter.getApiService().getLogin(
                         email, password, FirebaseInstanceId.getInstance().getToken()
                 );

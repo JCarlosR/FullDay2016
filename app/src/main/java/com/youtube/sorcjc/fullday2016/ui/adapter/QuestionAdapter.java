@@ -1,6 +1,8 @@
 package com.youtube.sorcjc.fullday2016.ui.adapter;
 
 import android.content.Context;
+import android.os.SystemClock;
+import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,11 +34,13 @@ import static android.R.attr.id;
 public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHolder> {
 
     private static final String TAG = "QuestionAdapter";
+    private static long lastClickTime;
+    private static int ignoredTimes = 0;
 
     private ArrayList<Question> dataSet;
 
     private static FirebaseDatabase database;
-    private static QuestionAdapter questionAdapter;
+    // private static QuestionAdapter questionAdapter;
     private static int user_id;
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -49,7 +54,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
         Button btnLike, btnDislike;
         // data
         String key;
-        int position;
+        // int position;
 
         ViewHolder(View v) {
             super(v);
@@ -70,6 +75,32 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
 
         @Override
         public void onClick(View view) {
+            // Preventing multiple clicks, using threshold of 1 second
+            if (SystemClock.elapsedRealtime() - lastClickTime < 1000) {
+                switch (ignoredTimes) {
+                    case 1:
+                        Toast.makeText(context, R.string.stop_clicking_1, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 4:
+                        Toast.makeText(context, R.string.stop_clicking_2, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 10:
+                        Toast.makeText(context, R.string.stop_clicking_3, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 22:
+                        Toast.makeText(context, R.string.stop_clicking_4, Toast.LENGTH_SHORT).show();
+                        break;
+                }
+
+                if (ignoredTimes >= 23)
+                    vibrateDevice();
+
+                lastClickTime = SystemClock.elapsedRealtime();
+                ++ignoredTimes;
+                return;
+            } else lastClickTime = SystemClock.elapsedRealtime();
+
+            ignoredTimes = 0;
             switch (view.getId()) {
                 case R.id.btnLike:
                     toggleLike();
@@ -78,12 +109,19 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                 case R.id.btnDislike:
                     toggleLike();
                     btnDislike.setEnabled(false);
+                    break;
             }
+        }
+
+        private void vibrateDevice() {
+            // Vibrate for 250 milliseconds
+            Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(250);
         }
 
         private void toggleLike() {
             DatabaseReference myRef = database.getReference("likes/"+user_id+"/"+key);
-            myRef.addListenerForSingleValueEvent(new StatusLikeForSingleValue(user_id, key, position));
+            myRef.addListenerForSingleValueEvent(new StatusLikeForSingleValue(user_id, key/*, position*/));
         }
 
     }
@@ -92,12 +130,12 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
 
         private int user_id;
         private String key;
-        private int position;
+        // private int position;
 
-        StatusLikeForSingleValue(int user_id, String key, int position) {
+        StatusLikeForSingleValue(int user_id, String key/*, int position*/) {
             this.user_id = user_id;
             this.key = key;
-            this.position = position;
+            // this.position = position;
         }
 
         @Override
@@ -125,8 +163,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                     @Override
                     public void onComplete(DatabaseError databaseError, boolean b,
                                            DataSnapshot dataSnapshot) {
-                        questionAdapter.dataSet.get(position).setLiked(false);
-                        questionAdapter.notifyItemChanged(position);
+                        /*questionAdapter.dataSet.get(position).setLiked(false);
+                        questionAdapter.notifyItemChanged(position);*/
                     }
                 });
 
@@ -155,8 +193,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
                     @Override
                     public void onComplete(DatabaseError databaseError, boolean b,
                                            DataSnapshot dataSnapshot) {
-                        questionAdapter.dataSet.get(position).setLiked(true);
-                        questionAdapter.notifyItemChanged(position);
+                        /*questionAdapter.dataSet.get(position).setLiked(true);
+                        questionAdapter.notifyItemChanged(position);*/
                     }
                 });
 
@@ -172,7 +210,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
     }
 
     public QuestionAdapter(int userId) {
-        questionAdapter = this;
+        // questionAdapter = this;
         user_id = userId;
 
         this.dataSet = new ArrayList<>();
@@ -185,6 +223,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
         this.dataSet = dataSet;
         notifyDataSetChanged();
     }
+    /*
     public void addQuestion(Question question) {
         this.dataSet.add(question);
         final int sizeDataSet = this.dataSet.size();
@@ -193,6 +232,9 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
     public void updateQuestion(Question question) {
         for (int i=0; i<this.dataSet.size(); ++i) {
             if (this.dataSet.get(i).getKey().equals(question.getKey())) {
+                // Keep the liked state
+                question.setLiked(this.dataSet.get(i).isLiked());
+                // and replace without problems
                 this.dataSet.set(i, question);
                 notifyItemChanged(i);
                 break;
@@ -208,6 +250,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
             }
         }
     }
+    */
 
     @Override
     public QuestionAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -240,7 +283,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
 
         // params needed to show the details
         holder.key = currentQuestion.getKey();
-        holder.position = position;
+        // holder.position = position;
     }
 
     @Override

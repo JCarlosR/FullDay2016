@@ -82,6 +82,8 @@ public class ChatActivity extends AppCompatActivity implements ValueEventListene
     private void getInstantQuestions() {
         database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("questions");
+        myRef.orderByChild("likes").addValueEventListener(this);
+        /*
         // First reading
         myRef.orderByChild("likes").addListenerForSingleValueEvent(this);
         // Next readings
@@ -106,6 +108,7 @@ public class ChatActivity extends AppCompatActivity implements ValueEventListene
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+        */
     }
 
     @Override

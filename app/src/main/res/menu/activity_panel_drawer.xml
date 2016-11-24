@@ -26,10 +26,6 @@
     <item android:title="Más opciones">
         <menu>
             <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_build_24dp"
-                android:title="@string/action_settings" />
-            <item
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_insert_emoticon_24dp"
                 android:title="Acerca de" />

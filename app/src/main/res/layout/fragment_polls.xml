@@ -9,6 +9,6 @@
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Responde las siguientes preguntas y gana premios increíbles !" />
+        android:text="Esta opción se habilitará el día del evento ;)" />
 
 </LinearLayout>

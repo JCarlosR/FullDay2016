@@ -4,11 +4,30 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 public class Global {
+
+    public static String getBase64FromBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+        byte[] byteFormat = stream.toByteArray();
+        // Get the base 64 string
+        return Base64.encodeToString(byteFormat, Base64.NO_WRAP);
+    }
+
+    public static Bitmap decodeFromBase64(String imageBase64) throws IOException {
+        byte[] decodedByteArray = android.util.Base64.decode(imageBase64, Base64.NO_WRAP);
+        return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
+    }
 
     public static void clearSharedPreferences(Activity activity) {
         saveInSharedPreferences(activity, "token", "");

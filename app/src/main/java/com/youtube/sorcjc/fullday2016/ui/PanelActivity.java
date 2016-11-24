@@ -3,7 +3,12 @@ package com.youtube.sorcjc.fullday2016.ui;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,28 +20,35 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
 import com.youtube.sorcjc.fullday2016.io.FullDayApiAdapter;
 import com.youtube.sorcjc.fullday2016.io.response.LoginResponse;
+import com.youtube.sorcjc.fullday2016.model.Photo;
 import com.youtube.sorcjc.fullday2016.ui.activity.ChatActivity;
 import com.youtube.sorcjc.fullday2016.ui.fragment.AboutFragment;
 import com.youtube.sorcjc.fullday2016.ui.fragment.EventFragment;
+import com.youtube.sorcjc.fullday2016.ui.fragment.GalleryFragment;
 import com.youtube.sorcjc.fullday2016.ui.fragment.PollsFragment;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static java.security.AccessController.getContext;
 
 public class PanelActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -116,7 +128,7 @@ public class PanelActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Log.d("MyFirebase", "Token => " + FirebaseInstanceId.getInstance().getToken());
+        // Log.d("MyFirebase", "Token => " + FirebaseInstanceId.getInstance().getToken());
     }
 
     @Override
@@ -131,19 +143,15 @@ public class PanelActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu
         getMenuInflater().inflate(R.menu.panel, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
             showLogoutDialog();
             return true;
@@ -191,12 +199,11 @@ public class PanelActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_camera:
+                startCamera();
                 break;
 
             case R.id.nav_gallery:
-                break;
-
-            case R.id.nav_settings:
+                fragment = new GalleryFragment();
                 break;
 
             case R.id.nav_about:
@@ -223,5 +230,86 @@ public class PanelActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
         }
+    }
+
+    private static final int REQUEST_IMAGE_CAPTURE = 100;
+    private final String DEFAULT_PHOTO_EXTENSION = "jpg";
+    private String currentPhotoPath; // location of the last photo taken
+
+    private void startCamera() {
+        // Create the File where the photo should go
+        File photoFile = null;
+        try {
+            photoFile = createDestinationFile();
+        } catch (IOException ex) {
+            return;
+        }
+
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private File createDestinationFile() throws IOException {
+        // Path for the temporary image and its name
+        final File storageDirectory = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        final String imageFileName = "" + System.currentTimeMillis();
+
+        File image = File.createTempFile(
+                imageFileName,          // prefix
+                "." + DEFAULT_PHOTO_EXTENSION, // suffix
+                storageDirectory              // directory
+        );
+
+        // Save a the file path
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+            postPicture(bitmap);
+            boolean deleted = new File(currentPhotoPath).delete();
+            if (! deleted) {
+                Toast.makeText(this, R.string.optional_photo_delete, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void postPicture(Bitmap bitmap) {
+        String imageEncoded = Global.getBase64FromBitmap(bitmap);
+
+        // Create a photo object
+        Photo newPhoto = new Photo();
+        newPhoto.setImageBase64(imageEncoded);
+        // Take the user data
+        final int userId = Global.getIntFromSharedPreferences(this, "user_id");
+        if (userId == 0) {
+            Toast.makeText(PanelActivity.this, R.string.session_expired, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final String name = Global.getFromSharedPreferences(this, "name");
+        newPhoto.setName(name);
+
+        // And store the photo
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("photos/"+userId);
+        final String newPhotoKey = ref.push().getKey();
+        ref.child(newPhotoKey).setValue(newPhoto, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference ref) {
+                if (databaseError != null) {
+                    Toast.makeText(PanelActivity.this, R.string.error_photo_upload, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PanelActivity.this, R.string.success_photo_upload, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

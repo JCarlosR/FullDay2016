@@ -18,4 +18,8 @@
     <string name="stop_clicking_2">No insista, por favor !</string>
     <string name="stop_clicking_3">Inhale y exhale</string>
     <string name="stop_clicking_4">Controla tu dedo e.e</string>
+
+    <string name="error_photo_upload">Ha ocurrido un error al subir la foto</string>
+    <string name="success_photo_upload">La foto se ha publicado correctamente !</string>
+    <string name="optional_photo_delete">Si desea luego puede eliminar la foto del celular</string>
 </resources>

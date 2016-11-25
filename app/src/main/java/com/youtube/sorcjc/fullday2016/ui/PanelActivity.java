@@ -41,10 +41,12 @@ import com.youtube.sorcjc.fullday2016.ui.activity.ChatActivity;
 import com.youtube.sorcjc.fullday2016.ui.fragment.AboutFragment;
 import com.youtube.sorcjc.fullday2016.ui.fragment.EventFragment;
 import com.youtube.sorcjc.fullday2016.ui.fragment.GalleryFragment;
+import com.youtube.sorcjc.fullday2016.ui.fragment.PollsFragment;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -209,6 +211,7 @@ public class PanelActivity extends AppCompatActivity
         @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        Calendar c = Calendar.getInstance();
 
         Fragment fragment = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -219,8 +222,14 @@ public class PanelActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_polls:
-            {//fragment = new PollsFragment();
-                ObtenerQuestions();
+                {
+                  int  dia = c.get(Calendar.DATE);
+                  if (dia==26){
+                      ObtenerQuestions();
+                  } else{
+                      fragment = new PollsFragment();
+                      Toast.makeText(this,"Tenga paciencia...", Toast.LENGTH_SHORT).show();
+                  }
                 }
                 break;
 

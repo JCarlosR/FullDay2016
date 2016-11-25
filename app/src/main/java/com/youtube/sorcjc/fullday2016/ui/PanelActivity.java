@@ -27,9 +27,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
 import com.youtube.sorcjc.fullday2016.io.FullDayApiAdapter;
@@ -286,8 +291,8 @@ public class PanelActivity extends AppCompatActivity
     }
 
     public void postPicture(Bitmap bitmap) {
-        String imageEncoded = Global.getBase64FromBitmap(bitmap);
-        String thumbnailEncoded = Global.getLowBase64FromBitmap(bitmap);
+        final byte[] imageData = Global.getDataFromBitmap(bitmap);
+        final byte[] thumbnailData = Global.getLowDataFromBitmap(bitmap);
 
         // Take the user data
         final int userId = Global.getIntFromSharedPreferences(this, "user_id");
@@ -299,23 +304,60 @@ public class PanelActivity extends AppCompatActivity
 
         // Create a photo object
         Photo newPhoto = new Photo();
-        newPhoto.setImageBase64(imageEncoded);
-        newPhoto.setThumbnail(thumbnailEncoded);
         newPhoto.setName(name);
         newPhoto.setUserId(userId);
-
-        // And store the photo
+        // Store into the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("photos");
+        DatabaseReference ref = database.getReference("images");
         final String newPhotoKey = ref.push().getKey();
+        // newPhoto.setKey(newPhotoKey); // it is redundant
         ref.child(newPhotoKey).setValue(newPhoto, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference ref) {
                 if (databaseError != null) {
                     Toast.makeText(PanelActivity.this, R.string.error_photo_upload, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(PanelActivity.this, R.string.success_photo_upload, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PanelActivity.this, R.string.success_photo_uploading, Toast.LENGTH_SHORT).show();
+                    uploadToStorage(imageData, thumbnailData, newPhotoKey);
                 }
+            }
+        });
+    }
+
+    private void uploadToStorage(byte[] image, byte[] thumbnail, String key) {
+        // Create a storage reference
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://full-day-2016.appspot.com/");
+
+        // Specific references
+        StorageReference imagesRef = storageRef.child("images/"+key+".jpg");
+        StorageReference thumbnailsRef = storageRef.child("thumbnails/"+key+".jpg");
+
+        UploadTask uploadImageTask = imagesRef.putBytes(image);
+        uploadImageTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(PanelActivity.this, R.string.failure_image_upload, Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Toast.makeText(PanelActivity.this, R.string.success_image_upload, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        UploadTask uploadThumbnailTask = thumbnailsRef.putBytes(thumbnail);
+        uploadThumbnailTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(PanelActivity.this, R.string.failure_thumbnail_upload, Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Toast.makeText(PanelActivity.this, R.string.success_thumbnail_upload, Toast.LENGTH_SHORT).show();
             }
         });
     }

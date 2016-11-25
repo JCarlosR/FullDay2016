@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +14,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
 
@@ -25,13 +33,12 @@ import java.io.IOException;
 public class PhotoActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView ivPhoto;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
-
-        String imageBase64 = Global.getFromSharedPreferences(this, "imageBase64");
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -39,16 +46,40 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        String imageKey = Global.getFromSharedPreferences(this, "imageKey");
         ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
-        try {
-            Bitmap imageBitmap = Global.decodeFromBase64(imageBase64);
-            ivPhoto.setImageBitmap(imageBitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        loadImageFromStorage(imageKey);
 
         Button btnShare = (Button) findViewById(R.id.btnShare);
         btnShare.setOnClickListener(this);
+    }
+
+    private void loadImageFromStorage(String key) {
+        // Create a storage reference
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://full-day-2016.appspot.com/");
+        storageRef.child("images/"+key+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(getApplicationContext()).load(uri.toString())
+                    .into(ivPhoto, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError() {
+                        }
+                    });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                ivPhoto.setImageResource(R.drawable.logo_app);
+            }
+        });
     }
 
     @Override

@@ -16,35 +16,30 @@ import java.io.IOException;
 
 public class Global {
 
-    public static String getBase64FromBitmap(Bitmap bitmap) {
+    public static byte[] getDataFromBitmap(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
-        byte[] byteFormat = stream.toByteArray();
-        // Get the base 64 string
-        return Base64.encodeToString(byteFormat, Base64.NO_WRAP);
+        return stream.toByteArray();
     }
 
-    public static String getLowBase64FromBitmap(Bitmap bitmap) {
+    public static byte[] getLowDataFromBitmap(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, stream);
-        byte[] byteFormat = stream.toByteArray();
-        // Get the base 64 string
-        return Base64.encodeToString(byteFormat, Base64.NO_WRAP);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 45, stream);
+        return stream.toByteArray();
     }
 
     public static Bitmap decodeFromBase64(String imageBase64) throws IOException {
+        System.gc();
+
         byte[] decodedByteArray = android.util.Base64.decode(imageBase64, Base64.NO_WRAP);
         return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
     }
-
     public static Bitmap decodeAndReduceFromBase64(String imageBase64) throws IOException {
+        System.gc();
+
         byte[] decodedByteArray = android.util.Base64.decode(imageBase64, Base64.NO_WRAP);
         Bitmap image = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
-
-        if(image.getHeight() <= 500 && image.getWidth() <= 500)
-            return image;
-
-        return Bitmap.createScaledBitmap(image, image.getHeight()/2, image.getHeight()/2, false);
+        return Bitmap.createScaledBitmap(image, image.getHeight()/3, image.getHeight()/3, false);
     }
 
     public static void clearSharedPreferences(Activity activity) {

@@ -11,11 +11,25 @@
     android:orientation="vertical"
     tools:context="com.youtube.sorcjc.fullday2016.ui.activity.PhotoActivity">
 
-    <ImageView
-        android:id="@+id/ivPhoto"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_width="match_parent" />
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/ivPhoto"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent" />
+
+    </FrameLayout>
+
+
 
     <Button
         android:id="@+id/btnShare"

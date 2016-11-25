@@ -3,43 +3,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_panel"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.youtube.sorcjc.fullday2016.ui.PanelActivity"
     tools:showIn="@layout/app_bar_panel">
 
     <ImageView
-        android:layout_centerHorizontal="true"
         android:id="@+id/ivLogo"
-        android:src="@mipmap/ic_launcher"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/tvWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/ivLogo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="II Full Day Gestión de TI"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
+        android:id="@+id/tvCallToAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/tvWelcome"
         android:layout_centerHorizontal="true"
-        android:text="Use el menú lateral para acceder a las distintas secciones."
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:padding="6dp"
+        android:text="Use el menú lateral para acceder a las distintas secciones." />
 
     <TextView
         android:id="@+id/tvInstructions"
-        android:padding="10dp"
-        android:layout_marginTop="25dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/tvWelcome"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvCallToAction"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:padding="10dp" />
 </RelativeLayout>

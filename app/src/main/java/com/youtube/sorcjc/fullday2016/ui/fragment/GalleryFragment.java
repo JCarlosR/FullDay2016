@@ -59,7 +59,7 @@ public class GalleryFragment extends Fragment implements ValueEventListener {
                 layoutManager = new GridLayoutManager(getContext(), 1);
                 break;
             case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-                layoutManager = new GridLayoutManager(getContext(), 1);
+                layoutManager = new GridLayoutManager(getContext(), 2);
                 break;
             case Configuration.SCREENLAYOUT_SIZE_LARGE:
                 layoutManager = new GridLayoutManager(getContext(), 2);
@@ -92,7 +92,7 @@ public class GalleryFragment extends Fragment implements ValueEventListener {
 
     private void loadLastPhotos() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("photos").addListenerForSingleValueEvent(this);
+        database.getReference("images").limitToLast(3).addListenerForSingleValueEvent(this);
     }
 
     @Override
@@ -100,6 +100,7 @@ public class GalleryFragment extends Fragment implements ValueEventListener {
         ArrayList<Photo> photos = new ArrayList<>();
         for (DataSnapshot photoSnap: dataSnapshot.getChildren()) {
             Photo photo = photoSnap.getValue(Photo.class);
+            photo.setKey(photoSnap.getKey());
             photos.add(photo);
         }
 

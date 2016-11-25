@@ -37,9 +37,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.youtube.sorcjc.fullday2016.Global;
 import com.youtube.sorcjc.fullday2016.R;
+import com.youtube.sorcjc.fullday2016.ui.activity.SurveyActivity;
 import com.youtube.sorcjc.fullday2016.io.FullDayApiAdapter;
 import com.youtube.sorcjc.fullday2016.io.response.LoginResponse;
+import com.youtube.sorcjc.fullday2016.io.response.SurveyResponse;
 import com.youtube.sorcjc.fullday2016.model.Photo;
+import com.youtube.sorcjc.fullday2016.model.Survey;
 import com.youtube.sorcjc.fullday2016.ui.activity.ChatActivity;
 import com.youtube.sorcjc.fullday2016.ui.fragment.AboutFragment;
 import com.youtube.sorcjc.fullday2016.ui.fragment.EventFragment;
@@ -48,6 +51,8 @@ import com.youtube.sorcjc.fullday2016.ui.fragment.PollsFragment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -55,12 +60,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static java.security.AccessController.getContext;
-
 public class PanelActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, Callback<SurveyResponse> {
 
     private static final String TAG = "PanelActivity";
+    ArrayList<Survey> arrayList;
 
     @Override
     protected void onStart() {
@@ -93,19 +97,14 @@ public class PanelActivity extends AppCompatActivity
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
                     if (loginResponse.isError()) {
-                        // Clear shared preferences
-                        Global.clearSharedPreferences(activity);
-                        Toast.makeText(PanelActivity.this, R.string.session_expired, Toast.LENGTH_SHORT).show();
-
-                        // Close all activities and open the login activity
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        clearAndGoToLogin(activity);
                     } else {
                         final String newToken = loginResponse.getToken();
                         Global.saveInSharedPreferences(activity, "token", newToken);
                         Global.saveInSharedPreferences(activity, "lastTime", currentTime);
                     }
+                } else {
+                    clearAndGoToLogin(activity);
                 }
             }
 
@@ -114,6 +113,17 @@ public class PanelActivity extends AppCompatActivity
                 Toast.makeText(PanelActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void clearAndGoToLogin(Activity activity) {
+        // Clear shared preferences
+        Global.clearSharedPreferences(activity);
+        Toast.makeText(PanelActivity.this, R.string.session_expired, Toast.LENGTH_SHORT).show();
+
+        // Close all activities and open the login activity
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override
@@ -190,9 +200,32 @@ public class PanelActivity extends AppCompatActivity
         adb.show();
     }
 
+    private  void fetchQuestions(){
+        Call<SurveyResponse> call = FullDayApiAdapter.getApiService().getSurvey(Global.getFromSharedPreferences(this, "token"));
+        call.enqueue(this);
+    }
+
+    @Override
+    public void onResponse(Call<SurveyResponse> call, Response<SurveyResponse> response) {
+        if (response.isSuccessful()) {
+            SurveyResponse surveyResponse = response.body();
+            arrayList = surveyResponse.getSurvey();
+
+            Intent intent = new Intent(this, SurveyActivity.class);
+            intent.putExtra("arrayList", arrayList);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onFailure(Call<SurveyResponse> call, Throwable t) {
+        Toast.makeText(this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        Calendar c = Calendar.getInstance();
 
         Fragment fragment = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -203,7 +236,13 @@ public class PanelActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_polls:
-                fragment = new PollsFragment();
+                int dia = c.get(Calendar.DATE);
+                if (dia==26) {
+                    fetchQuestions();
+                    Toast.makeText(this, R.string.loading_questions, Toast.LENGTH_SHORT).show();
+                } else {
+                    fragment = new PollsFragment();
+                }
                 break;
 
             case R.id.nav_camera:

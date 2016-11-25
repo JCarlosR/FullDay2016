@@ -11,6 +11,14 @@
     <string name="message_incorrect_format">Formato incorrecto</string>
     <string name="message_incorrect_credentials">Sus datos son incorrectos</string>
 
+    <string name="title_activity_surveys">SurveysActivity</string>
+    <string name="submit_confirm_message">¿Está seguro de enviar esta encuesta?</string>
+    <string name="submit_confirm_button">Confirmar</string>
+    <string name="next">SIGUIENTE</string>
+    <string name="finish">Enviar encuesta</string>
+    <string name="review">Encuesta resuelta:</string>
+    <string name="loading_questions">Cargando preguntas &#8230;</string>
+
     <string name="session_expired">Su sesión ha caducado</string>
     <string name="password_min_length">Ingrese al menos 6 caracteres para la contraseña</string>
 

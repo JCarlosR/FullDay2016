@@ -18,13 +18,33 @@ public class Global {
 
     public static byte[] getDataFromBitmap(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+
+        double height = bitmap.getHeight();
+        double width = bitmap.getWidth();
+        double divisor = 1;
+
+        while (height/divisor > 1280 || width/divisor > 1280) {
+            divisor += 0.5;
+        }
+
+        Bitmap thumbnailBitmap = Bitmap.createScaledBitmap(bitmap, (int) (width/divisor), (int) (height/divisor), false);
+        thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 75, stream);
         return stream.toByteArray();
     }
 
-    public static byte[] getLowDataFromBitmap(Bitmap bitmap) {
+    public static byte[] getThumbnailFromBitmap(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 45, stream);
+
+        double height = bitmap.getHeight();
+        double width = bitmap.getWidth();
+        double divisor = 2;
+
+        while (height/divisor >= 400 || width/divisor >= 400) {
+            divisor += 0.5;
+        }
+
+        Bitmap thumbnailBitmap = Bitmap.createScaledBitmap(bitmap, (int) (width/divisor), (int) (height/divisor), false);
+        thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream);
         return stream.toByteArray();
     }
 

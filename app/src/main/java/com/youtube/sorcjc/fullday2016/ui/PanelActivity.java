@@ -331,7 +331,7 @@ public class PanelActivity extends AppCompatActivity
 
     public void postPicture(Bitmap bitmap) {
         final byte[] imageData = Global.getDataFromBitmap(bitmap);
-        final byte[] thumbnailData = Global.getLowDataFromBitmap(bitmap);
+        final byte[] thumbnailData = Global.getThumbnailFromBitmap(bitmap);
 
         // Take the user data
         final int userId = Global.getIntFromSharedPreferences(this, "user_id");

@@ -92,7 +92,7 @@ public class GalleryFragment extends Fragment implements ValueEventListener {
 
     private void loadLastPhotos() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("images").limitToLast(3).addListenerForSingleValueEvent(this);
+        database.getReference("images").limitToLast(6).addListenerForSingleValueEvent(this);
     }
 
     @Override

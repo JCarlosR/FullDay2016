@@ -62,6 +62,7 @@ public class SurveyActivity extends AppCompatActivity implements PageFragmentCal
     private List<Page> mCurrentPageSequence;
     private StepPagerStrip mStepPagerStrip;
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +72,8 @@ public class SurveyActivity extends AppCompatActivity implements PageFragmentCal
         context = getApplicationContext();
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         ArrayList<Survey> lista = (ArrayList<Survey>) getIntent().getSerializableExtra("arrayList");
 
@@ -328,7 +330,7 @@ public class SurveyActivity extends AppCompatActivity implements PageFragmentCal
 
         @Override
         public void onFailure(Call<AnswersResponse> call, Throwable t) {
-            Toast.makeText(context,"Ocurrio un error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Ocurrio un error", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -351,7 +353,6 @@ public class SurveyActivity extends AppCompatActivity implements PageFragmentCal
 
         @Override
         public int getItemPosition(Object object) {
-            // TODO: be smarter about this
             if (object == mPrimaryItem) {
                 // Re-use the current fragment (its position never changes)
                 return POSITION_UNCHANGED;

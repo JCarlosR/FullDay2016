@@ -23,9 +23,7 @@ import com.youtube.sorcjc.fullday2016.wizard.ui.PonenteInfoFragment;
 
 import java.util.ArrayList;
 
-/**
- * A page asking for a name and an email.
- */
+
 public class PonenteInfoPage extends Page {
     public static final String NAME_DATA_KEY = "name";
     public static final String EMAIL_DATA_KEY = "email";

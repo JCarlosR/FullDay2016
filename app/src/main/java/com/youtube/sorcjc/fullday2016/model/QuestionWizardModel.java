@@ -20,14 +20,7 @@ import android.content.Context;
 
 import com.youtube.sorcjc.fullday2016.wizard.model.AbstractWizardModel;
 import com.youtube.sorcjc.fullday2016.wizard.model.PageList;
-import com.youtube.sorcjc.fullday2016.wizard.model.PonenteInfoBPage;
-import com.youtube.sorcjc.fullday2016.wizard.model.PonenteInfoCPage;
-import com.youtube.sorcjc.fullday2016.wizard.model.PonenteInfoDPage;
-import com.youtube.sorcjc.fullday2016.wizard.model.PonenteInfoEPage;
-import com.youtube.sorcjc.fullday2016.wizard.model.PonenteInfoEVPage;
-import com.youtube.sorcjc.fullday2016.wizard.model.PonenteInfoFPage;
 import com.youtube.sorcjc.fullday2016.wizard.model.PonenteInfoPage;
-import com.youtube.sorcjc.fullday2016.wizard.model.PonenteInfoREPage;
 import com.youtube.sorcjc.fullday2016.wizard.model.SingleFixedChoicePage;
 import com.youtube.sorcjc.fullday2016.wizard.model.TextPage;
 
@@ -55,27 +48,27 @@ public class QuestionWizardModel extends AbstractWizardModel{
                 pageList.add(new PonenteInfoPage(this, "PONENCIA 1"));
             }
             if ( s.getId()==6 ) {
-                pageList.add(new PonenteInfoBPage(this, "PONENCIA 2"));
+                pageList.add(new PonenteInfoPage(this, "PONENCIA 2"));
             }
             if ( s.getId()==11 ) {
-                pageList.add(new PonenteInfoCPage(this, "PONENCIA 3"));
+                pageList.add(new PonenteInfoPage(this, "PONENCIA 3"));
             }
             if ( s.getId()==16 ) {
-                pageList.add(new PonenteInfoEVPage(this, "EVENTO"));
+                pageList.add(new PonenteInfoPage(this, "EVENTO"));
             }
 
             //Carga Interfaces Tarde
             if (s.getId()==28 ){
-                pageList.add(new PonenteInfoDPage(this, "PONENCIA 4"));
+                pageList.add(new PonenteInfoPage(this, "PONENCIA 4"));
             }
             if ( s.getId()==33 ) {
-                pageList.add(new PonenteInfoEPage(this, "PONENCIA 5"));
+                pageList.add(new PonenteInfoPage(this, "PONENCIA 5"));
             }
             if ( s.getId()==38 ) {
-                pageList.add(new PonenteInfoFPage(this, "PONENCIA 6"));
+                pageList.add(new PonenteInfoPage(this, "PONENCIA 6"));
             }
             if ( s.getId()==43 ) {
-                pageList.add(new PonenteInfoEVPage(this, "EVENTO"));
+                pageList.add(new PonenteInfoPage(this, "EVENTO"));
             }
             //Carga Preguntas
             if (s.getType()==1){
@@ -88,7 +81,7 @@ public class QuestionWizardModel extends AbstractWizardModel{
                         .setRequired(true));
             }
             if (s.getType()==0){
-                pageList.add(new PonenteInfoREPage(this, "Encuesta").setRequired(true));
+                pageList.add(new PonenteInfoPage(this, "Encuesta").setRequired(true));
 
             }
             ind=ind+1;

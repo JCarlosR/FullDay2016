@@ -123,8 +123,7 @@ public class SingleChoiceFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        mPage.getData().putString(Page.SIMPLE_DATA_KEY,
-                getListAdapter().getItem(position).toString());
+        mPage.getData().putString(Page.SIMPLE_DATA_KEY, getListAdapter().getItem(position).toString());
         mPage.notifyDataChanged();
     }
 }

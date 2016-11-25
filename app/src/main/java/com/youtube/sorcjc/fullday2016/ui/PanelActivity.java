@@ -237,7 +237,7 @@ public class PanelActivity extends AppCompatActivity
 
             case R.id.nav_polls:
                 int dia = c.get(Calendar.DATE);
-                if (dia==26) {
+                if (/*dia == 26*/true) {
                     fetchQuestions();
                     Toast.makeText(this, R.string.loading_questions, Toast.LENGTH_SHORT).show();
                 } else {

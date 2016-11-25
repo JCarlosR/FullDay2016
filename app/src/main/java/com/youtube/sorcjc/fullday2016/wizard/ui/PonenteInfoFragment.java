@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.youtube.sorcjc.fullday2016.R;
 import com.youtube.sorcjc.fullday2016.wizard.model.PonenteInfoPage;
@@ -67,15 +68,47 @@ public class PonenteInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_page_ponente_a, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_page_ponente, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
-        titulo=mPage.getTitle();
-        if(titulo=="PONENCIA 1"){
-            mNameView = ((TextView) rootView.findViewById(R.id.your_name));
+
+        titulo = mPage.getTitle();
+        mNameView = ((TextView) rootView.findViewById(R.id.your_name));
+        mEmailView = ((TextView) rootView.findViewById(R.id.your_email));
+
+        if (titulo.equals("PONENCIA 1")) {
             mNameView.setText("El CIO ¿Cómo dar el salto al nivel estratétigo del negocio?");
-            mEmailView = ((TextView) rootView.findViewById(R.id.your_email));
             mEmailView.setText("JAVIER QUEVEDO ");
+        } else if (titulo.equals("PONENCIA 2")) {
+            mNameView.setText("Cómo estructurar y gestionar un portafolio de inversiones en TI");
+            mEmailView.setText("Luigi Antonio Lizza Mendoza");
+        } else if (titulo.equals("PONENCIA 3")) {
+            mNameView.setText("Gestión de proyectos en la nube");
+            mEmailView.setText("Karla Vanessa Barreto Stein ");
+        } else if (titulo.equals("PONENCIA 4")) {
+            mNameView.setText("Contribución del areá de TI a la consecución de los resultados financieros");
+            mEmailView.setText("Raul Saldaña");
+        } else if (titulo.equals("PONENCIA 5")) {
+            mNameView.setText("Transformación digital");
+            mEmailView.setText("Roberto Llanos Gallo");
+        } else if (titulo.equals("PONENCIA 6")) {
+            mNameView.setText("Cómo gestionar una empresa de base tecnológica");
+            mEmailView.setText("Maricarmen García de Ureña");
+        } else if (titulo.equals("EVENTO")) {
+            mNameView.setText("Cuestionario sobre el evento");
+            mEmailView.setVisibility(View.GONE);
+            ponente = ((TextView) rootView.findViewById(R.id.ponente));
+            ponente.setVisibility(View.GONE);
+            tema = ((TextView) rootView.findViewById(R.id.tema));
+            tema.setVisibility(View.GONE);
+        } else if (titulo.equals("ENCUESTA")) {
+            mNameView.setText("Ya realizo la encuesta de este turno, espere hasta el siguiente turno por favor.");
+            mEmailView.setVisibility(View.INVISIBLE);
+            ponente = ((TextView) rootView.findViewById(R.id.ponente));
+            ponente.setVisibility(View.INVISIBLE);
+            tema = ((TextView) rootView.findViewById(R.id.tema));
+            tema.setVisibility(View.INVISIBLE);
         }
+
         return rootView;
     }
 
@@ -102,8 +135,7 @@ public class PonenteInfoFragment extends Fragment {
 
         mNameView.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1,
-                                          int i2) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
             @Override
@@ -141,8 +173,6 @@ public class PonenteInfoFragment extends Fragment {
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
 
-        // In a future update to the support library, this should override setUserVisibleHint
-        // instead of setMenuVisibility.
         if (mNameView != null) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
                     Context.INPUT_METHOD_SERVICE);

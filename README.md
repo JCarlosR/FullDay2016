@@ -28,5 +28,4 @@ thumbnails:
 
 TODO
 ---
-Compartir foto cargando
 Recortar más la miniatura

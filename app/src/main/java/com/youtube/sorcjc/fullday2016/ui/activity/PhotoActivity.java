@@ -34,6 +34,7 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
 
     private ImageView ivPhoto;
     private ProgressBar progressBar;
+    private Button btnShare, btnReTry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,20 +47,28 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        String imageKey = Global.getFromSharedPreferences(this, "imageKey");
         ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        loadImageFromStorage(imageKey);
+        loadImageFromStorage();
 
-        Button btnShare = (Button) findViewById(R.id.btnShare);
+        btnShare = (Button) findViewById(R.id.btnShare);
         btnShare.setOnClickListener(this);
+
+        btnReTry = (Button) findViewById(R.id.btnReTry);
+        btnReTry.setOnClickListener(this);
     }
 
-    private void loadImageFromStorage(String key) {
+    private void loadImageFromStorage() {
+        System.gc();
+
         // Create a storage reference
+        String imageKey = Global.getFromSharedPreferences(this, "imageKey");
+        if (imageKey.isEmpty())
+            finish();
+
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://full-day-2016.appspot.com/");
-        storageRef.child("images/"+key+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        storageRef.child("images/"+imageKey+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 Picasso.with(getApplicationContext()).load(uri.toString())
@@ -67,17 +76,24 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
                         @Override
                         public void onSuccess() {
                             progressBar.setVisibility(View.GONE);
+                            btnShare.setEnabled(true);
+                            btnReTry.setVisibility(View.GONE);
                         }
 
                         @Override
                         public void onError() {
+                            ivPhoto.setImageResource(R.drawable.background_splash);
+                            btnReTry.setVisibility(View.VISIBLE);
+                            btnReTry.setEnabled(true);
                         }
                     });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                ivPhoto.setImageResource(R.drawable.logo_app);
+                ivPhoto.setImageResource(R.drawable.background_splash);
+                btnReTry.setVisibility(View.VISIBLE);
+                btnReTry.setEnabled(true);
             }
         });
     }
@@ -97,6 +113,10 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
         switch (view.getId()) {
             case R.id.btnShare:
                 performShareAction();
+                break;
+            case R.id.btnReTry:
+                loadImageFromStorage();
+                btnReTry.setEnabled(false);
                 break;
         }
     }

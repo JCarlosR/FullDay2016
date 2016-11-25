@@ -30,10 +30,17 @@
     </FrameLayout>
 
 
-
+    <Button
+        android:id="@+id/btnReTry"
+        android:text="Volver a intentar"
+        android:visibility="gone"
+        android:enabled="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <Button
         android:id="@+id/btnShare"
         android:text="Compartir foto"
+        android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

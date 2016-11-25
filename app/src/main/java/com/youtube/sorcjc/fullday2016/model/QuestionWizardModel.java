@@ -81,8 +81,7 @@ public class QuestionWizardModel extends AbstractWizardModel{
                         .setRequired(true));
             }
             if (s.getType()==0){
-                pageList.add(new PonenteInfoPage(this, "Encuesta").setRequired(true));
-
+                pageList.add(new PonenteInfoPage(this, "ENCUESTA").setRequired(true));
             }
             ind=ind+1;
         }

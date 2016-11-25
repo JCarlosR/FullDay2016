@@ -44,10 +44,18 @@
         <activity android:name=".ui.LoginActivity" />
 
         <activity android:name=".ui.activity.SurveyActivity"
-            android:parentActivityName=".ui.PanelActivity"></activity>
+            android:parentActivityName=".ui.PanelActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.PanelActivity" />
+        </activity>
         <activity
             android:name=".ui.activity.ChatActivity"
-            android:parentActivityName=".ui.PanelActivity" />
+            android:parentActivityName=".ui.PanelActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.PanelActivity" />
+        </activity>
         <activity android:name=".ui.activity.PhotoActivity" />
 
     </application>

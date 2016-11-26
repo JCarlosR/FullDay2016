@@ -3,12 +3,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context="com.youtube.sorcjc.fullday2016.ui.fragment.AboutFragment">
 
     <TextView
-        android:gravity="center"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Información sobre el equipo de desarrollo" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Equipo de desarrollo" />
 
+    <TextView
+        android:gravity="center"
+        android:text="Gonzales Castillo, Jorge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:gravity="center"
+        android:text="Juarez Guzman, Miguel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:gravity="center"
+        android:text="Ramos Suyón, Juan Carlos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:gravity="center"
+        android:text="Rivera Román, Eduardo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:gravity="center"
+        android:text="Soles Cavero, Edilberto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
